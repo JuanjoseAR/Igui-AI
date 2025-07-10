@@ -5,6 +5,4 @@ llama-cpp-python/
 .wwebjs_auth/
 .wwebjs_cache/
 .wwebjs_cache/
-package-lock.json
-package.json
 node_modules/
