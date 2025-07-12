@@ -1,13 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
 import asyncio
 
 from bot.whatsapp.registro_wpp import manejar_mensaje_wpp
 from bot.whatsapp.respuestas_wpp import responder_pregunta_wpp
 from bot.whatsapp.documentos_wpp import listar_documentos_wpp, obtener_ruta_documento
-from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular
+from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, es_usuario_admin
 from bot.whatsapp.service.pqrs_service import insertar_pqrs
 from modelos.worker_llm import iniciar_workers_llm
+from bot.whatsapp.service.archivos_preguntas import procesar_archivo_preguntas
 
 app = FastAPI()
 
@@ -166,3 +167,21 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         respuesta = await responder_pregunta_wpp(user_id, mensaje_usuario=texto)
 
     return {"respuesta": respuesta}
+
+@app.post("/cargar-preguntas")
+async def cargar_preguntas(id_usuario: str = Form(...), archivo: UploadFile = File(...)):
+    usuario_bd = obtener_usuario_por_id_celular(id_usuario)
+    
+    if not usuario_bd or not es_usuario_admin(usuario_bd["id"]):
+        await asyncio.sleep(2)
+        return {"respuesta": "🚫 No estás autorizado para subir preguntas."}
+
+    contenido = await archivo.read()
+    exito, errores = await procesar_archivo_preguntas(contenido, archivo.filename, usuario_bd["id"])
+
+    if exito:
+        await asyncio.sleep(2)
+        return {"respuesta": "✅ Preguntas procesadas correctamente."}
+    else:
+        await asyncio.sleep(2)
+        return {"respuesta": f"⚠️ Algunas preguntas no se pudieron guardar:\n{errores}"}
