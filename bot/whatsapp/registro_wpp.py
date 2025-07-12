@@ -1,24 +1,19 @@
-import json, os
-from config import RUTA_JSON_USUARIOS
+
+from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, insertar_usuario
+
 
 usuarios_en_memoria = {}  # user_id -> {"estado": ..., "registro": {...}}
 
-def _cargar_usuarios():
-    if not os.path.exists(RUTA_JSON_USUARIOS):
-        return {}
-    with open(RUTA_JSON_USUARIOS, encoding='utf-8') as f:
-        return json.load(f)
 
-def _guardar_usuarios(data):
-    with open(RUTA_JSON_USUARIOS, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+
+
 
 async def manejar_mensaje_wpp(user_id: str, texto: str) -> str:
     texto = texto.strip()
-    usuarios_registrados = _cargar_usuarios()
+    
 
     # Si ya está registrado
-    if user_id in usuarios_registrados:
+    if obtener_usuario_por_id_celular(user_id) is not None:
         usuarios_en_memoria[user_id] = {"estado": "registrado"}
         return "✅ Ya estás registrado. Puedes hacer tu pregunta."
 
@@ -62,11 +57,10 @@ async def manejar_mensaje_wpp(user_id: str, texto: str) -> str:
         if texto == "1":
             datos = usuario["registro"]
             datos["numero_celular_1"] = ""
-            datos["numero_celular_2"] = user_id
+            datos["numero_celular_id"] = user_id
             datos["aceptacion_de_politicas"] = True
 
-            usuarios_registrados[user_id] = datos
-            _guardar_usuarios(usuarios_registrados)
+            insertar_usuario(datos)
 
             usuarios_en_memoria[user_id]["estado"] = "registrado"
             return "✅ Registro completado. Puedes hacer tu pregunta."
