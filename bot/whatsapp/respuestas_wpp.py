@@ -1,12 +1,11 @@
 # === respuesta_wpp.py ===
-# import json
 from sentence_transformers import SentenceTransformer, util
-# from config import RUTA_JSON_CONTEXTO
 from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular
 from bot.whatsapp.service.preguntas_bajas_service import registrar_pregunta_baja
 from modelos.worker_llm import cola_llm  # Asegúrate de importar desde donde lo pongas
 from bot.whatsapp.service.pregunta_service import obtener_todas_las_preguntas
 import asyncio
+import re
 
 modelo_embedding = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -16,12 +15,6 @@ datos = obtener_todas_las_preguntas()
 preguntas = [fila["pregunta"] for fila in datos]
 respuestas = [fila["contexto"] for fila in datos]
 respuesta_rapida = [fila["respuesta_rapida"] for fila in datos]
-
-# contexto = json.load(f)
-# preguntas = [item['pregunta'] for item in contexto]
-# respuestas = [item['respuesta'] for item in contexto]
-# respuesta_rapida = [item['respuesta_rapida'] for item in contexto]
-# documentos = [item['documentos'] for item in contexto]
 embeddings = modelo_embedding.encode(preguntas, convert_to_tensor=True)
 
 def recargar_contexto():
@@ -43,6 +36,9 @@ def recargar_contexto():
 
 # Función adaptada para WhatsApp
 async def responder_pregunta_wpp(user_id: str, mensaje_usuario: str) -> str:
+    if es_input_malicioso(mensaje_usuario):
+        return "⚠️ Tu mensaje contiene caracteres no permitidos. Reformúlalo sin símbolos especiales ni comandos."
+    
     embedding_usuario = modelo_embedding.encode(mensaje_usuario, convert_to_tensor=True)
     similitudes = util.pytorch_cos_sim(embedding_usuario, embeddings)[0]
     indice_max = similitudes.argmax().item()
@@ -89,3 +85,13 @@ async def responder_pregunta_wpp(user_id: str, mensaje_usuario: str) -> str:
         ))
 
         return await future
+    
+def es_input_malicioso(texto):
+    patrones = [
+        r"(--|\b(SELECT|INSERT|DELETE|UPDATE|DROP|TRUNCATE|EXEC|UNION|OR|AND)\b)",
+        r"[<>;]|(\*{2,})|['\"\\]"
+    ]
+    for patron in patrones:
+        if re.search(patron, texto, re.IGNORECASE):
+            return True
+    return False

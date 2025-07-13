@@ -1,3 +1,4 @@
+# ---servidor.py
 from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
 import asyncio
@@ -5,9 +6,10 @@ import asyncio
 from bot.whatsapp.registro_wpp import manejar_mensaje_wpp
 from bot.whatsapp.respuestas_wpp import responder_pregunta_wpp
 from bot.whatsapp.documentos_wpp import listar_documentos_wpp, obtener_ruta_documento
+from bot.whatsapp.service.bloqueo_service import bloquear_usuario, obtener_usuarios_bloqueados
 from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, es_usuario_admin
 from bot.whatsapp.service.pqrs_service import insertar_pqrs
-from modelos.worker_llm import iniciar_workers_llm
+from modelos.worker_llm import contar_mensajes_en_cola, iniciar_workers_llm
 from bot.whatsapp.service.archivos_preguntas import procesar_archivo_preguntas
 
 app = FastAPI()
@@ -16,6 +18,7 @@ context = type("Context", (), {})()
 context.user_data = {}
 usuarios_suspendidos = set()
 pqrs_en_memoria = {}
+usuarios_bloqueados = set()
 
 class MensajeWhatsApp(BaseModel):
     id_usuario: str
@@ -28,6 +31,8 @@ def leer_inicio():
 @app.on_event("startup")
 async def iniciar_workers():
     await iniciar_workers_llm(num_workers=2)  # puedes subir a 4 si quieres
+    usuarios_bloqueados.update(obtener_usuarios_bloqueados())
+    asyncio.create_task(actualizar_bloqueados_periodicamente())
     
 @app.post("/webhook")
 async def recibir_mensaje(mensaje: MensajeWhatsApp):
@@ -38,6 +43,9 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
     if user_id in usuarios_suspendidos and texto.lower() != "/activar":
         await asyncio.sleep(2)
         return {"respuesta": None}
+    if user_id in usuarios_bloqueados:
+        await asyncio.sleep(2)
+        return None
 
     if texto.lower() == "/ayuda":
         usuarios_suspendidos.add(user_id)
@@ -164,6 +172,11 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         await asyncio.sleep(2)
         respuesta = await manejar_mensaje_wpp(user_id, texto)
     else:
+        en_cola = contar_mensajes_en_cola(user_id)
+        if en_cola >= 4:
+            bloquear_usuario(user_id, motivo="llm", cantidad=en_cola + 1)
+            usuarios_bloqueados.add(user_id)
+            return "🚫 Has sido bloqueado por enviar demasiados mensajes seguidos. Escribe /ayuda si crees que fue un error."
         respuesta = await responder_pregunta_wpp(user_id, mensaje_usuario=texto)
 
     return {"respuesta": respuesta}
@@ -185,3 +198,9 @@ async def cargar_preguntas(id_usuario: str = Form(...), archivo: UploadFile = Fi
     else:
         await asyncio.sleep(2)
         return {"respuesta": f"⚠️ Algunas preguntas no se pudieron guardar:\n{errores}"}
+
+async def actualizar_bloqueados_periodicamente():
+    while True:
+        usuarios_bloqueados.clear()
+        usuarios_bloqueados.update(obtener_usuarios_bloqueados())
+        await asyncio.sleep(300)  # 5 minutos

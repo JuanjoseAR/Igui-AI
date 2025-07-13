@@ -41,3 +41,6 @@ async def worker_llm():
 async def iniciar_workers_llm(num_workers=2):
     for _ in range(num_workers):
         asyncio.create_task(worker_llm())
+
+def contar_mensajes_en_cola(user_id: str) -> int:
+    return sum(1 for item in cola_llm._queue if item[0] == user_id)

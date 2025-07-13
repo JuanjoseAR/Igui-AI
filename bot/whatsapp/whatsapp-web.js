@@ -21,6 +21,10 @@ client.on('message', async msg => {
     try {
         if (msg.hasMedia) {
             const media = await msg.downloadMedia();
+            if (!media || !media.mimetype.startsWith('text')) {
+                await client.sendMessage(msg.from, "❌ Solo se aceptan archivos de texto (.txt o .docx).");
+                return;
+            }
 
             if (media && media.mimetype.includes('text')) {
                 const buffer = Buffer.from(media.data, 'base64');
@@ -52,7 +56,10 @@ client.on('message', async msg => {
             return;
         }
 
-        if (!msg.body) return;
+        if (!msg.body || typeof msg.body !== 'string' || msg.body.trim() === '') {
+            await client.sendMessage(msg.from, "❌ Solo se aceptan mensajes de texto legibles.");
+            return;
+        }
 
         const response = await axios.post('http://localhost:8000/webhook', {
             id_usuario: msg.from,
