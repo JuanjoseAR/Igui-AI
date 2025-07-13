@@ -44,3 +44,21 @@ async def iniciar_workers_llm(num_workers=2):
 
 def contar_mensajes_en_cola(user_id: str) -> int:
     return sum(1 for item in cola_llm._queue if item[0] == user_id)
+
+async def filtrar_mensajes_llm_por_usuario(user_id_bloqueado: str):
+    nuevos_items = []
+    eliminados = 0
+
+    while not cola_llm.empty():
+        item = await cola_llm.get()
+        uid = item[0]  # user_id está en la posición 0 del item
+        if uid != user_id_bloqueado:
+            nuevos_items.append(item)
+        else:
+            eliminados += 1
+        cola_llm.task_done()
+
+    for item in nuevos_items:
+        await cola_llm.put(item)
+
+    print(f"🧹 Se eliminaron {eliminados} mensajes de {user_id_bloqueado} de la cola LLM.")

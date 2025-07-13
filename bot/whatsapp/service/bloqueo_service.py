@@ -4,7 +4,7 @@ def obtener_usuarios_bloqueados():
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT numero_celular_id FROM usuarios_bloqueados")
-            return set(row[0] for row in cur.fetchall())
+            return set(row["numero_celular_id"] for row in cur.fetchall())
 
 def bloquear_usuario(numero_celular_id: str, motivo: str, cantidad: int):
     with get_connection() as conn:

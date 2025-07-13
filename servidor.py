@@ -9,7 +9,7 @@ from bot.whatsapp.documentos_wpp import listar_documentos_wpp, obtener_ruta_docu
 from bot.whatsapp.service.bloqueo_service import bloquear_usuario, obtener_usuarios_bloqueados
 from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, es_usuario_admin
 from bot.whatsapp.service.pqrs_service import insertar_pqrs
-from modelos.worker_llm import contar_mensajes_en_cola, iniciar_workers_llm
+from modelos.worker_llm import contar_mensajes_en_cola, filtrar_mensajes_llm_por_usuario, iniciar_workers_llm
 from bot.whatsapp.service.archivos_preguntas import procesar_archivo_preguntas
 
 app = FastAPI()
@@ -45,7 +45,7 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         return {"respuesta": None}
     if user_id in usuarios_bloqueados:
         await asyncio.sleep(2)
-        return None
+        return {"respuesta": None}
 
     if texto.lower() == "/ayuda":
         usuarios_suspendidos.add(user_id)
@@ -172,11 +172,13 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         await asyncio.sleep(2)
         respuesta = await manejar_mensaje_wpp(user_id, texto)
     else:
-        en_cola = contar_mensajes_en_cola(user_id)
+        id_user = usuario_bd["id"]
+        en_cola = contar_mensajes_en_cola(id_user)
         if en_cola >= 4:
             bloquear_usuario(user_id, motivo="llm", cantidad=en_cola + 1)
             usuarios_bloqueados.add(user_id)
-            return "🚫 Has sido bloqueado por enviar demasiados mensajes seguidos. Escribe /ayuda si crees que fue un error."
+            await filtrar_mensajes_llm_por_usuario(id_user)  # 👈 Limpiar mensajes pendientes
+            return {"respuesta": "🚫 Has sido bloqueado por enviar demasiados mensajes seguidos. Escribe /ayuda si crees que fue un error."}
         respuesta = await responder_pregunta_wpp(user_id, mensaje_usuario=texto)
 
     return {"respuesta": respuesta}

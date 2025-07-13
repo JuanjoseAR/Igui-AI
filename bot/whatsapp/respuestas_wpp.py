@@ -74,6 +74,7 @@ async def responder_pregunta_wpp(user_id: str, mensaje_usuario: str) -> str:
             "que reformule mejor su pregunta o si desea que se contacte con un representante a traves del comando /ayuda."
         )
         future = asyncio.get_event_loop().create_future()
+        
         await cola_llm.put((
             usuario["id"],
             mensaje_usuario,
