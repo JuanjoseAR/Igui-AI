@@ -27,7 +27,7 @@ def recargar_contexto():
 
     modelo_embedding = SentenceTransformer('all-MiniLM-L6-v2')
     nuevos_embeddings = modelo_embedding.encode(nuevas_preguntas, convert_to_tensor=True)
-
+    print("actualizó el embeddings")
     # 🚀 Asignación atómica
     preguntas = nuevas_preguntas
     respuestas = nuevas_respuestas
@@ -44,7 +44,9 @@ async def responder_pregunta_wpp(user_id: str, mensaje_usuario: str) -> str:
     indice_max = similitudes.argmax().item()
     score_max = similitudes[indice_max].item()
     usuario = obtener_usuario_por_id_celular(user_id)
-
+    print(f"🧠 Pregunta usuario: {mensaje_usuario}")
+    print(f"🔎 Pregunta más cercana: {preguntas[indice_max]}")
+    print(f"🎯 Similitud: {score_max}")
     if score_max >= 0.90:
         await asyncio.sleep(2)
         return f"🧠 {respuesta_rapida[indice_max]}"
