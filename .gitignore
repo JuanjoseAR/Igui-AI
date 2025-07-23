@@ -1,0 +1,11 @@
+asistente_ia_env/
+__pycache__/
+convertirPDF/
+llama-cpp-python/
+.wwebjs_auth/
+.wwebjs_cache/
+.wwebjs_cache/
+node_modules/
+config.py
+mistral-7b-instruct-v0.1.Q4_K_M.gguf
+yi-34b-chat.Q4_K_M.gguf
