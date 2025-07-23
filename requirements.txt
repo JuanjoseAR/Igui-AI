@@ -1,0 +1,88 @@
+faiss-cpu
+pdfplumber
+sentence-transformers
+llama-cpp-python
+transformers
+torch
+numpy
+scikit-learn
+PyPDF2
+
+# Estructura del proyecto sugerida:
+
+# asistente_unimagdalena/
+# ├── main.py                       # Ejecutable principal del bot
+# ├── config.py                     # Configuraciones globales (rutas, tokens, etc.)
+# ├── bot/
+# │   ├── handlers.py               # Comandos y flujo del bot
+# │   ├── registro.py               # Registro y aceptación de políticas
+# │   └── respuestas.py             # Generación de respuestas basadas en contexto
+# ├── modelos/
+# │   └── modelo.py                 # Carga y uso del modelo Mistral
+# ├── utils/
+# │   ├── parseador_txt_a_json.py  # Convierte archivo .txt a JSON estructurado
+# │   └── indexador.py              # Índices y recuperación semántica
+# ├── data/
+# │   ├── contexto.json             # Preguntas/respuestas precargadas
+# │   └── usuarios.json             # Registro de usuarios
+# ├── documentos/                   # PDFs u otros archivos referenciados
+# └── README.md
+
+# A continuación te doy el contenido base de cada archivo, puedes pedirme desarrollarlos uno por uno:
+
+
+# A continuación te doy el contenido base de cada archivo, puedes pedirme desarrollarlos uno por uno:
+
+# === main.py ===
+# # from bot.handlers import iniciar_bot
+
+# # if __name__ == '__main__':
+# #     iniciar_bot()
+
+# === config.py ===
+# # TOKEN_TELEGRAM = 'TU_TOKEN_AQUI'
+# # RUTA_MODELO = 'modelos/mistral-7b-instruct-v0.1.Q4_K_M.gguf'
+# # RUTA_JSON_CONTEXTO = 'json/contexto.json'
+# # RUTA_JSON_USUARIOS = 'json/usuarios.json'
+# # RUTA_DOCUMENTOS = 'documentos/'
+# # MAX_TOKENS = 4096
+
+# === utils/parseador_txt_a_json.py ===
+# # def parsear_txt_a_json(ruta_txt: str) -> list:
+# #     import re, json
+# #     with open(ruta_txt, encoding='utf-8') as f:
+# #         contenido = f.read()
+# #     bloques = re.split(r'\n(?=\¿)', contenido)
+# #     contexto = []
+# #     for bloque in bloques:
+# #         pregunta_match = re.search(r'\¿(.+?)\?', bloque)
+# #         respuesta_match = re.search(r'\?\n(.+?)(?=Documentos:|$)', bloque, re.DOTALL)
+# #         documentos_match = re.findall(r'"([^"]+),\s*([^"]+)"', bloque)
+# #         if pregunta_match and respuesta_match:
+# #             pregunta = pregunta_match.group(1).strip()
+# #             respuesta = respuesta_match.group(1).strip()
+# #             documentos = [{'nombre': d[0].strip(), 'referencia': d[1].strip()} for d in documentos_match]
+# #             contexto.append({
+# #                 'pregunta': pregunta,
+# #                 'respuesta': respuesta,
+# #                 'documentos': documentos
+# #             })
+# #     return contexto
+
+# Para usar esta función y guardar el JSON:
+# with open('json/contexto.json', 'w', encoding='utf-8') as f:
+#     json.dump(parsear_txt_a_json('ruta.txt'), f, indent=2, ensure_ascii=False)
+
+# === utils/indexador.py ===
+# Aquí usarás sentence-transformers o FAISS para búsquedas semánticas
+# Puedes pedirlo luego.
+
+# === bot/handlers.py ===
+# Lógica del bot: comandos como /start, /documentos, /ayuda y conversación normal.
+# Se integra con registro.py y respuestas.py
+
+# === bot/registro.py ===
+# Manejo del primer mensaje con política de datos y guardado en usuarios.json
+
+# === bot/respuestas.py ===
+# Carga contexto.json, busca pregunta similar, genera respuesta o sugiere usar /ayuda
