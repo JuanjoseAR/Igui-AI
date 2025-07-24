@@ -1,9 +1,6 @@
-DB_USER = 'postgres'
-DB_PASWORD = 1082833957
-DB_NAME = 'Chatbot'
-TOKEN_TELEGRAM = '7846660129:AAEeucB3yP2-dw4FZsjcxDj6wvSeiTCjsKk'
+DB_USER = ''
+DB_PASWORD = ''
+DB_NAME = ''
 RUTA_MODELO = 'modelos/mistral-7b-instruct-v0.1.Q4_K_M.gguf'
-RUTA_JSON_CONTEXTO = 'data/contexto.json'
-RUTA_JSON_USUARIOS = 'data/usuarios.json'
-RUTA_DOCUMENTOS = 'C:/Users/ACER/Desktop/AsistenteAI/documentos/'
+RUTA_MODELO_YI='modelos/yi-34b-chat.Q4_K_M.gguf'
 MAX_TOKENS = 4096
