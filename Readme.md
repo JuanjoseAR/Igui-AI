@@ -1,12 +1,20 @@
-MANUAL DE USO:
+# Introduction 
+TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
 
-Evitar enviar emojis o caracteres especiales, ningun simbolos distintos a las letras.
-Evitar enviar archivos a menos que seas admin, si eres admin solo puedes enviar archivos .txt o .docx.
-Evita hacer Spam o te bloquerá.
-Se especifico con las preguntas que le harás.
+# Getting Started
+TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+1.	Installation process
+2.	Software dependencies
+3.	Latest releases
+4.	API references
 
-Comandos:
-/ayuda: desactiva el Chatbot de manera indefinida para el usuario para que una persona real pueda responder en su lugar.
-/activa: activa nuevamente el Chatbot para una persona que lo tenia desactivado.
-/pqrs: Para que cualqueir usuario pueda dejar su pqrs y esta sea guardada en la base de datos para revisar.
-/documentos: para poder mandar documentos a los usuarios que deseen alguno.
+# Build and Test
+TODO: Describe and show how to build your code and run the tests. 
+
+# Contribute
+TODO: Explain how other users and developers can contribute to make your code better. 
+
+If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
+- [ASP.NET Core](https://github.com/aspnet/Home)
+- [Visual Studio Code](https://github.com/Microsoft/vscode)
+- [Chakra Core](https://github.com/Microsoft/ChakraCore)
