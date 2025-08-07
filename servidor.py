@@ -53,6 +53,9 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         if user_id in usuarios_bloqueados:
             await delay_aleatorio()
             return {"respuesta": None}
+        if len(texto)>200:
+            await delay_aleatorio()
+            return {"respuesta": "El mensaje no debe contener más de 200 caracteres"} 
         # Atención humana
         if texto.lower() == "/ayuda":
             usuarios_suspendidos.add(user_id)
@@ -196,7 +199,7 @@ async def cargar_preguntas(id_usuario: str = Form(...), archivo: UploadFile = Fi
     
     if not es_usuario_admin(usuario_bd["id"]):
         await delay_aleatorio()
-        return {"respuesta": "🚫 No estás autorizado para subir preguntas."}
+        return {"respuesta": "🚫 No se aceptan archivos."}
 
     contenido = await archivo.read()
     exito, errores = await procesar_archivo_preguntas(contenido, archivo.filename, usuario_bd["id"])
@@ -229,4 +232,9 @@ async def actualizar_bloqueados_periodicamente():
 async def delay_aleatorio(min_ms=2000, max_ms=5000):
     tiempo_ms = random.randint(min_ms, max_ms)
     await asyncio.sleep(tiempo_ms / 1000)  # convertir a segundos
+
+
+
+
+
 
