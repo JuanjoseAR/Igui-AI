@@ -5,7 +5,6 @@ import asyncio
 import random
 from bot.whatsapp.registro_wpp import manejar_mensaje_wpp
 from bot.whatsapp.respuestas_wpp import responder_pregunta_wpp
-#from bot.whatsapp.documentos_wpp import listar_documentos_wpp, obtener_ruta_documento
 from bot.whatsapp.service.bloqueo_service import bloquear_usuario, obtener_usuarios_bloqueados
 from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, es_usuario_admin
 from bot.whatsapp.service.pqrs_service import insertar_pqrs

@@ -1,18 +1,25 @@
-faiss-cpu
-pdfplumber
+# Embeddings y similitud
 sentence-transformers
-llama-cpp-python
-transformers
 torch
 numpy
-scikit-learn
+faiss-cpu
+rapidfuzz
+
+# Procesamiento de documentos
+pdfplumber
 PyPDF2
-docx2txt               
-python-docx           
-psycopg2-binary        
-rapidfuzz              
-fastapi                
-uvicorn[standard]      
-pydantic               
-aiofiles               
-python-multipart      
+python-docx
+docx2txt
+
+# Backend y API
+fastapi
+uvicorn[standard]
+pydantic
+python-multipart
+aiofiles
+
+# Base de datos PostgreSQL
+psycopg2-binary
+
+# Acceso a modelo vía API
+openai

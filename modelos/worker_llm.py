@@ -1,7 +1,6 @@
 # === archivo: worker_llm.py ===
 import asyncio
 import time
-#from modelos.modelo import ModeloMistral
 from bot.whatsapp.service.rendimiento_service import registrar_rendimiento
 from modelos.GPT_api import ModeloGPTAPI
 
