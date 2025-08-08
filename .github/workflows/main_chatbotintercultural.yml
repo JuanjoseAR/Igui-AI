@@ -9,43 +9,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python version
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies only if not cached
+      - name: Create env.py from secrets (si lo necesitas)
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          if [ ! -d ~/.cache/pip ]; then
-            echo "No pip cache found. Installing dependencies..."
-            pip install --upgrade pip
-            pip install -r requirements.txt
-          else
-            echo "Pip cache exists. Skipping install."
-          fi
-
+          echo "API_KEY = '${{ secrets.API_KEY }}'" > env.py
 
       - name: Prepare deployment package
         run: |
-          zip -r deploy.zip . -x "venv/*" ".git/*" ".github/*" "__pycache__/*" "*.pyc"
-          echo "Contents of deploy.zip:"
-          unzip -l deploy.zip
+          zip -r deploy.zip . \
+            -x "venv/*" ".venv/*" ".git/*" ".github/*" "__pycache__/*" "*.pyc" "*.pyo" "*.pyd" "*.db" \
+            "*.zip" "*.tar" "*.gz" "*.log" "tests/*" "docs/*" "README.md" "LICENSE"
+
+      - name: Show zip file size
+        run: du -h deploy.zip
 
       - name: Upload deployment package
         uses: actions/upload-artifact@v4
@@ -56,9 +40,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Download deployment package
@@ -69,13 +50,12 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_01E762BD95E24FBC85824C00F61A85BC }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A231BA571AD2427FA4CDDE54F69812A6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_37342F2347D74A6EA94BF09E85C1E686 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
           app-name: 'chatbotintercultural'
           slot-name: 'Production'
@@ -84,5 +64,5 @@ jobs:
       - name: Show deployment logs (on failure)
         if: failure()
         run: |
-          echo "Deployment failed. Consider checking Kudu logs at:"
-          echo "https://<your-app-name>.scm.azurewebsites.net/api/logs/docker"
+          echo "Deployment failed. Check logs:"
+          echo "https://chatbotintercultural.scm.azurewebsites.net/api/logs/docker"
