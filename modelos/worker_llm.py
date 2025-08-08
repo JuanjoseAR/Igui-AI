@@ -1,14 +1,15 @@
 # === archivo: worker_llm.py ===
 import asyncio
 import time
-from modelos.modelo import ModeloMistral
 from bot.whatsapp.service.rendimiento_service import registrar_rendimiento
+from modelos.GPT_api import ModeloGPTAPI
+
 
 # Cola global para procesar peticiones LLM
 cola_llm = asyncio.Queue()
 
 # Instanciar una sola vez el modelo
-modelo_llm = ModeloMistral()
+modelo_llm = ModeloGPTAPI()
 
 # === Worker ===
 async def worker_llm():
