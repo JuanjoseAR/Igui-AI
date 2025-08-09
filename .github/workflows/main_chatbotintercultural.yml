@@ -14,16 +14,15 @@ jobs:
       - name: Checkout latest commit only
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1  # Solo trae el último commit, evita descargar todo el historial
+          fetch-depth: 1  # Solo trae el último commit
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Create env.py from secrets (si lo necesitas)
-        run: |
-          echo "API_KEY = '${{ secrets.API_KEY }}'" > env.py
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Prepare deployment package
         run: |
@@ -50,12 +49,21 @@ jobs:
         with:
           name: deploy-package
 
+      - name: Ensure Azure secrets are set
+        run: |
+          if [ -z "${{ secrets.AZUREAPPSERVICE_CLIENTID_95F7D3D74047415399AC721FE77427E4 }}" ] || \
+             [ -z "${{ secrets.AZUREAPPSERVICE_TENANTID_7E6F7A2F99D247549A09F0C7C10DB51A }}" ] || \
+             [ -z "${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_81D4C71D70344E91825AB54AE8E18334 }}" ]; then
+            echo "❌ Faltan secrets de Azure. Configúralos en Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_95F7D3D74047415399AC721FE77427E4 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7E6F7A2F99D247549A09F0C7C10DB51A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_81D4C71D70344E91825AB54AE8E18334 }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
