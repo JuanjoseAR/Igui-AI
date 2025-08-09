@@ -11,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout latest commit only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Solo trae el último commit, evita descargar todo el historial
 
       - name: Set up Python
         uses: actions/setup-python@v5
