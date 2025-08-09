@@ -37,11 +37,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: deploy-package
-          path: deploy.zip
+          path: deploy.zip 
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      id-token: write       # Necesario para el login federado con Azure
+      contents: read        # Necesario para acciones de checkout
 
     steps:
       - name: Download deployment package
