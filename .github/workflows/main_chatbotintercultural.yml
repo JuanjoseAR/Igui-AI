@@ -74,6 +74,7 @@ jobs:
           app-name: 'chatbotintercultural'
           slot-name: 'Production'
           package: deploy.zip
+          verbose: true
 
       - name: Show deployment logs (on failure)
         if: failure()
