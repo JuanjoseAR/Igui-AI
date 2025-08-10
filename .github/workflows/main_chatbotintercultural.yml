@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          set -x  # Muestra cada comando antes de ejecutarlo, para debug
+          set -x
 
           cd ~/apps/miproyecto
 
@@ -30,14 +30,17 @@ jobs:
           echo "Activando entorno y cargando variables..."
           source activate_env.sh
 
-          echo "Instalando dependencias con pip (sin cache)..."
+          echo "Instalando dependencias sin cache..."
           pip install --no-cache-dir -r requirements.txt
 
-          echo "Listando procesos uvicorn antes de matar..."
-          ps aux | grep uvicorn || echo "No hay procesos uvicorn"
-
-          echo "Matando procesos uvicorn si existen..."
-          pkill -f "uvicorn servidor:app" || echo "No hay uvicorn corriendo"
+          echo "Buscando procesos uvicorn para matar..."
+          pids=$(pgrep -f "uvicorn servidor:app" | grep -v $$)
+          if [ -z "$pids" ]; then
+            echo "No hay procesos uvicorn para matar."
+          else
+            echo "Matando procesos uvicorn con PID: $pids"
+            kill $pids
+          fi
 
           echo "Iniciando uvicorn en background..."
           nohup uvicorn servidor:app --host 0.0.0.0 --port 8000 &
