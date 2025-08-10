@@ -1,48 +1,33 @@
-name: Deploy Python App
+- name: Deploy via SSH
+  uses: appleboy/ssh-action@v1
+  with:
+    host: ${{ secrets.VPS_HOST }}
+    username: ${{ secrets.VPS_USER }}
+    key: ${{ secrets.SSH_KEY }}
+    script: |
+      set -x
 
-on:
-  push:
-    branches:
-      - main
+      cd ~/apps/miproyecto
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+      echo "Haciendo git pull..."
+      git pull origin main
 
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      echo "Activando entorno y variables..."
+      source activate_env.sh
 
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          set -x
+      echo "Instalando dependencias sin cache..."
+      pip install --no-cache-dir -r requirements.txt
 
-          cd ~/apps/miproyecto
+      echo "Reiniciando servicio uvicorn..."
+      if sudo systemctl restart uvicorn.service; then
+        echo "Servicio uvicorn reiniciado correctamente."
+      else
+        echo "Error al reiniciar uvicorn.service"
+        echo "Mostrando último estado del servicio:"
+        sudo systemctl status uvicorn.service --no-pager
+        echo "Mostrando últimos logs del servicio:"
+        sudo journalctl -u uvicorn.service -n 30 --no-pager
+        exit 1
+      fi
 
-          echo "Haciendo git pull..."
-          git pull origin main
-
-          echo "Activando entorno y cargando variables..."
-          source activate_env.sh
-
-          echo "Instalando dependencias sin cache..."
-          pip install --no-cache-dir -r requirements.txt
-
-          echo "Buscando procesos uvicorn para matar..."
-          pids=$(pgrep -f "uvicorn servidor:app" | grep -v $$)
-          if [ -z "$pids" ]; then
-            echo "No hay procesos uvicorn para matar."
-          else
-            echo "Matando procesos uvicorn con PID: $pids"
-            kill $pids
-          fi
-
-          echo "Iniciando uvicorn en background..."
-          nohup uvicorn servidor:app --host 0.0.0.0 --port 8000 &
-
-          echo "Deploy finalizado."
+      echo "Deploy finalizado."
