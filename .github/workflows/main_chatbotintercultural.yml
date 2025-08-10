@@ -20,20 +20,26 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
+          set -x  # Muestra cada comando antes de ejecutarlo, para debug
+
           cd ~/apps/miproyecto
 
-          # Actualizar código
+          echo "Haciendo git pull..."
           git pull origin main
 
-          # Activar entorno y variables
+          echo "Activando entorno y cargando variables..."
           source activate_env.sh
 
-          # Instalar dependencias
-          pip install -r requirements.txt
+          echo "Instalando dependencias con pip (sin cache)..."
+          pip install --no-cache-dir -r requirements.txt
 
-          # Reiniciar app uvicorn
-          # Primero mata cualquier uvicorn corriendo en el puerto 8000 (ajusta si usas otro)
+          echo "Listando procesos uvicorn antes de matar..."
+          ps aux | grep uvicorn || echo "No hay procesos uvicorn"
+
+          echo "Matando procesos uvicorn si existen..."
           pkill -f "uvicorn servidor:app" || echo "No hay uvicorn corriendo"
 
-          # Luego inicia uvicorn en background sin bloquear (ajusta ruta y puerto)
-          nohup uvicorn servidor:app --host 0.0.0.0 --port 8000 &>/dev/null &
+          echo "Iniciando uvicorn en background..."
+          nohup uvicorn servidor:app --host 0.0.0.0 --port 8000 &
+
+          echo "Deploy finalizado."
