@@ -1,33 +1,48 @@
-- name: Deploy via SSH
-  uses: appleboy/ssh-action@v1
-  with:
-    host: ${{ secrets.VPS_HOST }}
-    username: ${{ secrets.VPS_USER }}
-    key: ${{ secrets.SSH_KEY }}
-    script: |
-      set -x
+name: Deploy Python App
 
-      cd ~/apps/miproyecto
+on:
+  push:
+    branches:
+      - main
 
-      echo "Haciendo git pull..."
-      git pull origin main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-      echo "Activando entorno y variables..."
-      source activate_env.sh
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      echo "Instalando dependencias sin cache..."
-      pip install --no-cache-dir -r requirements.txt
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          set -x
 
-      echo "Reiniciando servicio uvicorn..."
-      if sudo systemctl restart uvicorn.service; then
-        echo "Servicio uvicorn reiniciado correctamente."
-      else
-        echo "Error al reiniciar uvicorn.service"
-        echo "Mostrando último estado del servicio:"
-        sudo systemctl status uvicorn.service --no-pager
-        echo "Mostrando últimos logs del servicio:"
-        sudo journalctl -u uvicorn.service -n 30 --no-pager
-        exit 1
-      fi
+          cd ~/apps/miproyecto
 
-      echo "Deploy finalizado."
+          echo "Haciendo git pull..."
+          git pull origin main
+
+          echo "Activando entorno y variables..."
+          source activate_env.sh
+
+          echo "Instalando dependencias sin cache..."
+          pip install --no-cache-dir -r requirements.txt
+
+          echo "Reiniciando servicio uvicorn..."
+          if sudo systemctl restart uvicorn.service; then
+            echo "Servicio uvicorn reiniciado correctamente."
+          else
+            echo "Error al reiniciar uvicorn.service"
+            echo "Mostrando último estado del servicio:"
+            sudo systemctl status uvicorn.service --no-pager
+            echo "Mostrando últimos logs del servicio:"
+            sudo journalctl -u uvicorn.service -n 30 --no-pager
+            exit 1
+          fi
+
+          echo "Deploy finalizado."
