@@ -1,68 +1,39 @@
-name: Build and deploy Python app to Azure Web App - chatbotintercultural
+name: Deploy Python App
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Create env.py from secrets (si lo necesitas)
-        run: |
-          echo "API_KEY = '${{ secrets.API_KEY }}'" > env.py
-
-      - name: Prepare deployment package
-        run: |
-          zip -r deploy.zip . \
-            -x "venv/*" ".venv/*" ".git/*" ".github/*" "__pycache__/*" "*.pyc" "*.pyo" "*.pyd" "*.db" \
-            "*.zip" "*.tar" "*.gz" "*.log" "tests/*" "docs/*" "README.md" "LICENSE"
-
-      - name: Show zip file size
-        run: du -h deploy.zip
-
-      - name: Upload deployment package
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-package
-          path: deploy.zip
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
-      - name: Download deployment package
-        uses: actions/download-artifact@v4
-        with:
-          name: deploy-package
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd ~/apps/miproyecto
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'chatbotintercultural'
-          slot-name: 'Production'
-          package: deploy.zip
+          # Actualizar código
+          git pull origin main
 
-      - name: Show deployment logs (on failure)
-        if: failure()
-        run: |
-          echo "Deployment failed. Check logs:"
-          echo "https://chatbotintercultural.scm.azurewebsites.net/api/logs/docker"
+          # Activar entorno y variables
+          source activate_env.sh
+
+          # Instalar dependencias
+          pip install -r requirements.txt
+
+          # Reiniciar app uvicorn
+          # Primero mata cualquier uvicorn corriendo en el puerto 8000 (ajusta si usas otro)
+          pkill -f "uvicorn servidor:app" || echo "No hay uvicorn corriendo"
+
+          # Luego inicia uvicorn en background sin bloquear (ajusta ruta y puerto)
+          nohup uvicorn servidor:app --host 0.0.0.0 --port 8000 &>/dev/null &
