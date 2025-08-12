@@ -63,9 +63,9 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
                 "respuesta": (
                     "🤖 Has solicitado atención con un representante humano.\n"
                     "🛑 El bot ha sido suspendido temporalmente.\n\n"
-                    "📞 Contacta a:\n"
+                    "📞 Contacta a tus repres:\n"
                     "- Deiber Romo: +57 3005098698\n"
-                    "- Miguel Tozcano: +57 3012429790\n"
+                    "- Miguel Toscano: +57 3012429790\n"
                     "Cuando quieras reactivar el bot, escribe /activar."
                 )
             }
