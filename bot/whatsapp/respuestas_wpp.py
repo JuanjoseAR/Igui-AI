@@ -33,7 +33,7 @@ async def responder_pregunta_wpp(user_id: str, mensaje_usuario: str) -> str:
     if es_input_malicioso(mensaje_usuario):
         return "⚠️ Tu mensaje contiene caracteres no permitidos. Reformúlalo sin símbolos especiales ni comandos."
 
-    preguntas_filtradas = filtrar_preguntas_por_keywords(mensaje_usuario, preguntas_con_keywords, umbral=0.6, umbral_individual=0.85, debug=True)
+    preguntas_filtradas = filtrar_preguntas_por_keywords(mensaje_usuario, preguntas_con_keywords, umbral=0.6, umbral_individual=0.85, debug=False)
     preguntas_uso = preguntas_filtradas if preguntas_filtradas else preguntas
 
     embeddings_candidatos = modelo_embedding.encode(preguntas_uso, convert_to_tensor=True)
