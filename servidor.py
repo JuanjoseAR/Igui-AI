@@ -29,7 +29,7 @@ def leer_inicio():
 
 @app.on_event("startup")
 async def iniciar_workers():
-    await iniciar_workers_llm(num_workers=2)  # puedes subir a 4 si quieres
+    await iniciar_workers_llm(num_workers=6)  # puedes subir a 4 si quieres
     usuarios_bloqueados.update(obtener_usuarios_bloqueados())
     asyncio.create_task(actualizar_bloqueados_periodicamente())
     

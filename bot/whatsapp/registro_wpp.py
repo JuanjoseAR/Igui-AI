@@ -1,18 +1,18 @@
-
 # ---registro_wpp.py
 
+import re
 from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, insertar_usuario
-
 
 usuarios_en_memoria = {}  # user_id -> {"estado": ..., "registro": {...}}
 
-
-
-
+def es_texto_valido(texto: str) -> bool:
+    """
+    Valida que el texto solo contenga letras (incluyendo tildes) y espacios.
+    """
+    return bool(re.fullmatch(r"[A-Za-zÁÉÍÓÚáéíóúÑñ ]+", texto))
 
 async def manejar_mensaje_wpp(user_id: str, texto: str) -> str:
     texto = texto.strip()
-    
 
     # Si ya está registrado
     if obtener_usuario_por_id_celular(user_id) is not None:
@@ -29,23 +29,23 @@ async def manejar_mensaje_wpp(user_id: str, texto: str) -> str:
         }
         return (
             "👋 Bienvenido al asistente del Movimiento Universitario Intercultural de Unimagdalena.\n\n"
-            "📝 Por favor ingresa tu *nombre completo*:"
+            "📝 Por favor ingresa tu *nombre completo* (solo letras y espacios):"
         )
 
     estado = usuario["estado"]
 
     if estado == "esperando_nombre":
+        if not es_texto_valido(texto):
+            return "❌ Nombre inválido. Usa solo letras y espacios, sin números ni caracteres especiales.\n\n📝 Ingresa tu *nombre completo*:"
         usuario["registro"]["nombre_completo"] = texto
         usuario["estado"] = "esperando_programa"
-        return "🎓 Ingresa tu *programa académico*:"
+        return "🎓 Ingresa tu *programa académico* (solo letras y espacios):"
 
     elif estado == "esperando_programa":
+        if not es_texto_valido(texto):
+            return "❌ Programa inválido. Usa solo letras y espacios, sin números ni caracteres especiales.\n\n🎓 Ingresa tu *programa académico*:"
         usuario["registro"]["programa_que_pertenece"] = texto
-        usuario["estado"] = "esperando_correo"
-        return "📧 Ingresa tu *correo electrónico*:"
-
-    elif estado == "esperando_correo":
-        usuario["registro"]["correo_electronico"] = texto
+        usuario["registro"]["correo_electronico"] = "N/A"
         usuario["estado"] = "esperando_aceptacion"
         return (
             "🔐 *Políticas de Tratamiento de Datos:*\n\n"

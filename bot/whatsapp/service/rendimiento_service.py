@@ -1,5 +1,6 @@
 from data.db import get_connection
 from datetime import datetime
+from bot.whatsapp.service.hora_colombia import zona_colombia
 
 def registrar_rendimiento(
     id_usuario: int,
@@ -30,6 +31,6 @@ def registrar_rendimiento(
                 similitud,
                 pregunta_usuario,
                 respuesta_modelo,
-                datetime.now(),
+                datetime.now(zona_colombia),
                 tiempo_respuesta
             ))

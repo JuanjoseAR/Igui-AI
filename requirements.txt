@@ -23,3 +23,6 @@ psycopg2-binary
 
 # Acceso a modelo vía API
 openai
+
+#Hora local colombia
+pytz

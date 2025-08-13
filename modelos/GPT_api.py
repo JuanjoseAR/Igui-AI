@@ -1,8 +1,9 @@
 from openai import OpenAI
 from config import MODELO_GPT  # Asegúrate de tener la API Key ahí
 from datetime import datetime
+from bot.whatsapp.service.hora_colombia import zona_colombia
 
-fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+fecha_actual = datetime.now(zona_colombia).strftime("%Y-%m-%d %H:%M:%S")
 
 class ModeloGPTAPI:
     def __init__(self):
