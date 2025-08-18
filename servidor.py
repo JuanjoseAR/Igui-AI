@@ -55,7 +55,7 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         if len(texto)>200:
             await delay_aleatorio()
             return {"respuesta": "El mensaje no debe contener más de 200 caracteres"} 
-        if texto.lower() == "/políticas":
+        if (texto.lower() == "/políticas" or texto.lower() == "/politicas"):
             await delay_aleatorio()
             return {
                 "respuesta": "Aquí puedes acceder a nuestras políticas:\n\n"
@@ -63,7 +63,7 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
 
             }
         # Atención humana
-        if texto.lower() == "/ayuda":
+        if texto.lower() == "/ayuda" :
             usuarios_suspendidos.add(user_id)
             await delay_aleatorio()
             return {

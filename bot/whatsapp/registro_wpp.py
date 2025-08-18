@@ -51,7 +51,7 @@ async def manejar_mensaje_wpp(user_id: str, texto: str) -> str:
             "🔐 *Políticas de Tratamiento de Datos:*\n\n"
             "Tu información será usada únicamente para fines académicos relacionados con el Movimiento Universitario Intercultural.\n\n"
             "En este enlace puede accedera nuestras polícitas:\n\n"
-            "https://docs.google.com/document/d/1hgwytGenfZzhH27jkm4yO51aa-V9Dzy9/edit?usp=share_link&ouid=105206836791597668068&rtpof=true&sd=true"
+            "https://docs.google.com/document/d/1hgwytGenfZzhH27jkm4yO51aa-V9Dzy9/edit?usp=share_link&ouid=105206836791597668068&rtpof=true&sd=true\n\n"
             "¿Aceptas nuestras políticas?\n\n"
             "1. ✅ Acepto\n"
             "2. ❌ No acepto"
