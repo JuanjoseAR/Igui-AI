@@ -32,7 +32,7 @@ async def iniciar_workers():
     await iniciar_workers_llm(num_workers=6)  # puedes subir a 4 si quieres
     usuarios_bloqueados.update(obtener_usuarios_bloqueados())
     asyncio.create_task(actualizar_bloqueados_periodicamente())
-    
+
 @app.post("/webhook")
 async def recibir_mensaje(mensaje: MensajeWhatsApp):
     user_id = mensaje.id_usuario.strip()
@@ -55,6 +55,13 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         if len(texto)>200:
             await delay_aleatorio()
             return {"respuesta": "El mensaje no debe contener más de 200 caracteres"} 
+        if texto.lower() == "/políticas":
+            await delay_aleatorio()
+            return {
+                "respuesta": "Aquí puedes acceder a nuestras políticas:\n\n"
+                "https://docs.google.com/document/d/1hgwytGenfZzhH27jkm4yO51aa-V9Dzy9/edit?usp=share_link&ouid=105206836791597668068&rtpof=true&sd=true"
+
+            }
         # Atención humana
         if texto.lower() == "/ayuda":
             usuarios_suspendidos.add(user_id)
