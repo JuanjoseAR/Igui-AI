@@ -10,6 +10,7 @@ from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular,
 from bot.whatsapp.service.pqrs_service import insertar_pqrs
 from modelos.worker_llm import contar_mensajes_en_cola, filtrar_mensajes_llm_por_usuario, iniciar_workers_llm
 from bot.whatsapp.service.archivos_preguntas import procesar_archivo_preguntas
+from bot.whatsapp.service.hora_colombia import ahora_colombia  
 
 app = FastAPI()
 
@@ -18,6 +19,8 @@ context.user_data = {}
 usuarios_suspendidos = set()
 pqrs_en_memoria = {}
 usuarios_bloqueados = set()
+limite_usuarios = {}
+MAX_INTERACCIONES = 30
 
 class MensajeWhatsApp(BaseModel):
     id_usuario: str
@@ -37,6 +40,7 @@ async def iniciar_workers():
 async def recibir_mensaje(mensaje: MensajeWhatsApp):
     user_id = mensaje.id_usuario.strip()
     texto = mensaje.texto.strip()
+    hoy = ahora_colombia().strftime("%Y-%m-%d")
 
     # 👉 Consultar o registrar usuario
     usuario_bd = obtener_usuario_por_id_celular(user_id)
@@ -190,7 +194,18 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
             usuarios_bloqueados.add(user_id)
             await filtrar_mensajes_llm_por_usuario(id_user)  # 👈 Limpiar mensajes pendientes
             return {"respuesta": "🚫 Has sido bloqueado por enviar demasiados mensajes seguidos. Escribe /ayuda si crees que fue un error."}
+        if not texto.lower().startswith("/"):  
+            datos_usuario = limite_usuarios.get(user_id)
+
+            # Si es la primera vez en el día o cambió la fecha
+            if not datos_usuario or datos_usuario["fecha"] != hoy:
+                limite_usuarios[user_id] = {"conteo": 0, "fecha": hoy}
+
+            if limite_usuarios[user_id]["conteo"] >= MAX_INTERACCIONES:
+                await delay_aleatorio()
+                return {"respuesta": "🚫 Has alcanzado el límite de 30 interacciones con IGUI IA hoy.\n\n📅 Podrás volver a usar el servicio mañana a las 00:00 horas (hora Colombia).\n👉 Aún puedes usar los comandos como /ayuda, /pqrs, /activar."}
         respuesta = await responder_pregunta_wpp(user_id, mensaje_usuario=texto)
+        limite_usuarios[user_id]["conteo"] += 1
 
     return {"respuesta": respuesta}
 
