@@ -21,7 +21,7 @@ class ModeloGPTAPI:
             f"Ten en cuenta esta información de conocimiento general: "
             f"La universidad del Magdalena cumpleaños el 10 de Mayo y la semana cultural se realiza en torno a esa fecha,"
             f"Justamente se realiza en la semana del año en donde este la fecha del aniversario."
-            f"La Universidad del Magdalena fue fundada el 29 de octubre de 1958 y está ubicada en Santa Marta - Magdalena."
+            f"La Universidad del Magdalena fue fundada el 10 de mayo de 1962 y está ubicada en Santa Marta - Magdalena."
             f"Responde solo en base al siguiente contexto:\n\n"
             f"{contexto}\n\n"
             f"<|user|>{mensaje}<|end|>"
