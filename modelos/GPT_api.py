@@ -22,6 +22,8 @@ class ModeloGPTAPI:
             f"La universidad del Magdalena cumpleaños el 10 de Mayo y la semana cultural se realiza en torno a esa fecha,"
             f"Justamente se realiza en la semana del año en donde este la fecha del aniversario."
             f"La Universidad del Magdalena fue fundada el 10 de mayo de 1962 y está ubicada en Santa Marta - Magdalena."
+            f"El rector de la universidad del Magdalena se llama Pablo Vera Salazar conocido cariñosamente también como 'El tío Pablo'"
+            f"Si preguntan por el Tío pablo o a Pablo Vera se refieren al rector de la Universidad del Magdalena"
             f"Responde solo en base al siguiente contexto:\n\n"
             f"{contexto}\n\n"
             f"<|user|>{mensaje}<|end|>"
