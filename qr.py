@@ -7,7 +7,7 @@ app = FastAPI()
 
 # Configuración PostgreSQL con tunel SSH (puedes usar paramiko o pgAdmin con túnel)
 conn = psycopg2.connect(
-    host="127.0.0.1",  # luego del túnel
+    host="localhost",  # luego del túnel
     port="5432",
     database="qr",
     user="admin",
