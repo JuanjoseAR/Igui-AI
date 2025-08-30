@@ -2,7 +2,6 @@ import re
 import docx
 from typing import Tuple
 from io import BytesIO
-from bot.whatsapp.respuestas_wpp import recargar_contexto
 from bot.whatsapp.service import pregunta_service as ps
 from data.db import get_connection
 
@@ -92,7 +91,7 @@ async def procesar_archivo_preguntas(contenido: bytes, filename: str, id_usuario
                 ps.relacionar_documento_con_articulo(id_doc, id_art)
                 ps.relacionar_pregunta_con_documento(id_pregunta, id_doc)
 
-        recargar_contexto()
+        
         return (True, "") if not errores else (False, "\n".join(errores))
 
     except Exception as e:
