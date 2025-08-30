@@ -31,7 +31,7 @@ async def worker_llm():
         finally:
             cola_llm.task_done()
 
-async def iniciar_workers_llm(num_workers=2):
+async def iniciar_workers_llm(num_workers=5):
     for _ in range(num_workers):
         asyncio.create_task(worker_llm())
 

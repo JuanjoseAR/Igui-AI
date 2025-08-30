@@ -8,7 +8,7 @@ from bot.whatsapp.respuestas_wpp import responder_pregunta_wpp
 from bot.whatsapp.service.bloqueo_service import bloquear_usuario, obtener_usuarios_bloqueados
 from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular, es_usuario_admin
 from bot.whatsapp.service.pqrs_service import insertar_pqrs
-from modelos.worker_llm import contar_mensajes_en_cola, filtrar_mensajes_llm_por_usuario, iniciar_workers_llm
+from modelos.worker_llm import contar_mensajes_en_cola, iniciar_workers_llm
 from bot.whatsapp.service.archivos_preguntas import procesar_archivo_preguntas
 from bot.whatsapp.service.hora_colombia import ahora_colombia  
 
@@ -89,41 +89,7 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
             await delay_aleatorio()
             return {"respuesta": "🤖 El bot ya está activo para ti. Puedes hacer preguntas."}
 
-        # if texto.lower() == "/documentos":
-        #     await delay_aleatorio()
-        #     resultado = listar_documentos_wpp()
-        #     if isinstance(resultado, str):
-        #         return {"respuesta": resultado}
-            
-        #     respuesta, lista_documentos = resultado
-        #     context.user_data[user_id] = {"estado": "esperando_documento", "lista": lista_documentos}
-        #     return {"respuesta": respuesta}
-
-        # estado_usuario = context.user_data.get(user_id, {})
-        # if estado_usuario.get("estado") == "esperando_documento":
-        #     lista = estado_usuario.get("lista", [])
-        #     nombre = ""
-
-        #     if texto.isdigit():
-        #         indice = int(texto) - 1
-        #         if 0 <= indice < len(lista):
-        #             nombre = lista[indice]
-        #         else:
-        #             await delay_aleatorio()
-        #             return {"respuesta": "⚠️ Número inválido. Intenta de nuevo."}
-        #     else:
-        #         nombre = texto.strip()
-        #         if nombre not in lista:
-        #             await delay_aleatorio()
-        #             return {"respuesta": "⚠️ Nombre inválido. Intenta de nuevo."}
-
-        #     ruta = obtener_ruta_documento(nombre)
-        #     context.user_data.pop(user_id, None)
-        #     if ruta:
-        #         await delay_aleatorio()
-        #         return {"respuesta": f"📄 Aquí tienes el documento: {nombre}", "documento": ruta}
-        #     await delay_aleatorio()
-        #     return {"respuesta": "❌ El documento no fue encontrado en el servidor."}
+       
 
         # 👉 Iniciar flujo PQRS
         if texto.lower() == "/pqrs":
@@ -192,7 +158,6 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
         if en_cola >= 4:
             bloquear_usuario(user_id, motivo="llm", cantidad=en_cola + 1)
             usuarios_bloqueados.add(user_id)
-            await filtrar_mensajes_llm_por_usuario(id_user)  # 👈 Limpiar mensajes pendientes
             return {"respuesta": "🚫 Has sido bloqueado por enviar demasiados mensajes seguidos. Escribe /ayuda si crees que fue un error."}
         if not texto.lower().startswith("/"):  
             datos_usuario = limite_usuarios.get(user_id)
