@@ -15,9 +15,10 @@ async def worker_llm():
         try:
             texto_generado = modelo_llm.generar_respuesta(user_id, mensaje_usuario)
             duracion = round(time.time() - inicio, 2)
+            user =obtener_usuario_por_id_celular(user_id)
 
             registrar_rendimiento(
-                id_usuario=obtener_usuario_por_id_celular(user_id),
+                id_usuario=user["id"],
                 pregunta_usuario=mensaje_usuario,
                 respuesta_modelo=texto_generado,
                 tiempo_respuesta=duracion,

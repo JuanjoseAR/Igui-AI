@@ -1,9 +1,10 @@
 # thread_service.py
 from datetime import date
+from bot.whatsapp.service.hora_colombia import ahora_colombia 
 from data.db import get_connection
 
 def obtener_o_crear_thread(client, usuario_id: int) -> str:
-    hoy = date.today()
+    hoy = ahora_colombia()
 
     with get_connection() as conn:
         with conn.cursor() as cur:
