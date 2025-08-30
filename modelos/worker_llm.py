@@ -27,7 +27,7 @@ async def worker_llm():
                 pregunta_mas_cercana=None
             )
 
-            future.set_result(f"💡 {texto_generado}")
+            future.set_result(f"{texto_generado}")
         except Exception as e:
             future.set_exception(e)
         finally:

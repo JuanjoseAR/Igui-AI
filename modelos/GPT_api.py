@@ -1,4 +1,5 @@
 # GPT_API.py
+import re
 from openai import OpenAI
 from config import MODELO_GPT, ASSISTANT_ID
 from bot.whatsapp.service.thread_service import obtener_o_crear_thread
@@ -27,6 +28,11 @@ class ModeloGPTAPI:
         # 4. leer la respuesta
         if run.status == "completed":
             mensajes = self.client.beta.threads.messages.list(thread_id=thread_id)
-            return mensajes.data[0].content[0].text.value.strip()
+            respuesta = mensajes.data[0].content[0].text.value.strip()
+            return limpiar_citas(respuesta)
         else:
             return "⚠️ Ocurrió un error procesando tu mensaje. Intenta de nuevo."
+
+def limpiar_citas(texto: str) -> str:
+    # Elimina cosas como   o  
+    return re.sub(r"【\d+:\d+†[^】]+】", "", texto)
