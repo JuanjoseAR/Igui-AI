@@ -14,7 +14,7 @@ async def responder_pregunta_wpp(user_id: str, mensaje_usuario: str) -> str:
 
     # enviar a la cola del worker
     future = asyncio.get_event_loop().create_future()
-    await cola_llm.put((usuario["id"], mensaje_usuario, future))
+    await cola_llm.put((user_id, mensaje_usuario, future))
     return await future
 
 def es_input_malicioso(texto: str) -> bool:
