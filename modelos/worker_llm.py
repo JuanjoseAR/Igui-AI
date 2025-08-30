@@ -2,6 +2,7 @@
 import asyncio
 import time
 from bot.whatsapp.service.rendimiento_service import registrar_rendimiento
+from bot.whatsapp.service.usuario_service import obtener_usuario_por_id_celular
 from modelos.GPT_api import ModeloGPTAPI
 
 cola_llm = asyncio.Queue()
@@ -16,7 +17,7 @@ async def worker_llm():
             duracion = round(time.time() - inicio, 2)
 
             registrar_rendimiento(
-                id_usuario=user_id,
+                id_usuario=obtener_usuario_por_id_celular(user_id),
                 pregunta_usuario=mensaje_usuario,
                 respuesta_modelo=texto_generado,
                 tiempo_respuesta=duracion,
