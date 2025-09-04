@@ -40,6 +40,8 @@ async def iniciar_workers():
 async def recibir_mensaje(mensaje: MensajeWhatsApp):
     user_id = mensaje.id_usuario.strip()
     texto = mensaje.texto.strip()
+    print("mensaje de usuario: ")
+    print(texto)
     hoy = ahora_colombia().strftime("%Y-%m-%d")
 
     # 👉 Consultar o registrar usuario
@@ -170,6 +172,8 @@ async def recibir_mensaje(mensaje: MensajeWhatsApp):
                 await delay_aleatorio()
                 return {"respuesta": "🚫 Has alcanzado el límite de 30 interacciones con IGUI IA hoy.\n\n📅 Podrás volver a usar el servicio mañana a las 00:00 horas (hora Colombia).\n👉 Aún puedes usar los comandos como /ayuda, /pqrs, /activar."}
         respuesta = await responder_pregunta_wpp(user_id, mensaje_usuario=texto)
+        print("Respuesta del bot: ")
+        print(respuesta)
         limite_usuarios[user_id]["conteo"] += 1
 
     return {"respuesta": respuesta}
