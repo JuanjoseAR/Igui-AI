@@ -65,35 +65,7 @@ Las contribuciones son bienvenidas. Para colaborar:
 
 ## ✅ Licencia  
 
-Este proyecto está bajo la licencia **MIT License** (o especifica la correspondiente).  
+Este proyecto está bajo la licencia **MIT License**   
 
----
 
-## 🧪 Ejemplo de uso  
 
-curl -X POST http://localhost:3000/api/message \  
--H "Content-Type: application/json" \  
--d '{ "platform": "telegram", "userId": "123456", "text": "Hola, Igui-AI!" }'  
-
-**Respuesta esperada:**  
-
-{  
-&nbsp;&nbsp;"reply": "Hola 👋, ¿en qué puedo ayudarte hoy?"  
-}  
-
----
-
-## 🎯 Hoja de ruta  
-
-Futuras mejoras incluyen:  
-
-- Integraciones adicionales (Facebook Messenger, Slack, Discord, WhatsApp Business API).  
-- Funcionalidades avanzadas de PNL (análisis de sentimiento, intenciones personalizadas).  
-- Panel de administración para supervisión/monitorización de chats.  
-- Registros, métricas y analíticas internas.  
-
----
-
-## 📞 Contacto  
-
-Para preguntas o soporte, por favor contacta a cualquiera de los colaboradores listados más arriba o abre un **issue**.  
