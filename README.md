@@ -20,21 +20,6 @@ Igui-AI proporciona un servicio de chat inteligente basado en IA que puede integ
 
 ---
 
-## 📁 Estructura de Directorios
-
-```text
-/.
-├── src/                # Código fuente del backend
-│   ├── api/            # Controladores o rutas (ej. webhook, REST endpoints)
-│   ├── services/       # Lógica de IA y procesamiento de mensajes
-│   └── utils/          # Utilidades y helpers
-├── config/             # Archivos de configuración (API keys, tokens)
-├── tests/              # Pruebas unitarias e integraciones
-├── Dockerfile          # Para contenerización
-├── docker-compose.yml  # Orquestación si hay múltiples servicios
-├── package.json        # Dependencias y scripts (si es Node.js)
-└── README.md           # Este archivo
-```
 ## 🛠️ Instalación & Uso  
 
 **Dependencias de instalación (ej. Node.js):**  
@@ -85,7 +70,6 @@ Las contribuciones son bienvenidas. Para colaborar:
 3. Haz cambios y asegúrate de pasar las pruebas.  
 4. Envía un Pull Request describiendo tus cambios.  
 
-Por favor, revisa el archivo `CONTRIBUTING.md` (si existe) para detalles adicionales sobre estilo de código, pruebas, etc.  
 
 ---
 
