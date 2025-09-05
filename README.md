@@ -20,24 +20,6 @@ Igui-AI proporciona un servicio de chat inteligente basado en IA que puede integ
 
 ---
 
-## 🛠️ Instalación & Uso  
-
-**Dependencias de instalación (ej. Node.js):**  
-npm install  
-
-**Configura tus credenciales** (WhatsApp, Telegram, claves API) en `config/`.  
-
-**Ejecuta en desarrollo:**  
-npm run dev  
-
-**(Opcional) Ejecución vía Docker:**  
-docker build -t igui-ai .  
-docker run -p 3000:3000 igui-ai  
-
-**Pruebas:**  
-npm test  
-
----
 
 ## 🧠 ¿Cómo conectar un Frontend?  
 
