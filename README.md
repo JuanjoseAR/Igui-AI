@@ -1,98 +1,141 @@
-# 🌐 Igui-AI
+# Igui-AI
 
-**Igui-AI** es un servicio de inteligencia artificial diseñado para transformar repositorios en documentación **interactiva, accesible y explicativa**.  
-Su arquitectura **desacoplada** permite conectarlo fácilmente con diferentes interfaces como **WhatsApp, Telegram o un chat web**.
-
----
-
-## ✨ Características
-
-- 🔌 **Servicio desacoplado**: el backend AI puede ser consumido desde cualquier cliente.  
-- 📄 **Documentación automática**: genera explicaciones de funciones, clases y módulos.  
-- 📊 **Diagramas visuales**: crea diagramas (ej. Mermaid) para mostrar arquitectura y flujo.  
-- 🔍 **Búsqueda inteligente**: preguntas en lenguaje natural al código/documentación.  
-- 🧠 **Deep research**: análisis en múltiples pasos con IA para explicar y mejorar decisiones de diseño.  
-- 🤖 **Compatibilidad multi-modelo**: soporte para OpenAI, Gemini, OpenRouter y modelos locales (Ollama).  
+**Igui-AI** es un servicio de inteligencia artificial diseñado para integrarse fácilmente como backend conversacional. Permite conexiones flexibles con interfaces como WhatsApp, bots de Telegram o chats web.
 
 ---
 
-## 🧰 Tecnologías
+## 📌 Descripción del Proyecto
 
-| Componente     | Tecnología |
-|----------------|------------|
-| **Backend**    | FastAPI (Python) |
-| **AI**         | OpenAI, Gemini, OpenRouter, Ollama |
-| **Frontend**   | Flexible (WhatsApp, Telegram, Webchat, etc.) |
-| **Diagramas**  | Mermaid |
-| **Persistencia** | Embeddings para búsqueda semántica |
+Igui-AI proporciona un servicio de chat inteligente basado en IA que puede integrarse en diversas plataformas de mensajería o aplicaciones web. El frontend es modular y depende del caso de uso: puede conectarse a librerías de WhatsApp, Telegram o añadirse a un chat en una página web. La arquitectura está pensada para dejar el servicio disponible como microservicio o API REST.
 
 ---
 
-## ⚙️ Instalación
+## 🚀 Características
 
-### 🔹 Opción 1: Usando Docker (recomendado)
+- **Interfaz flexible**: compatible con WhatsApp, Telegram y chats web.
+- **Servicio backend independiente**: expose endpoints REST para manejar mensajes.
+- **Lógica impulsada por IA**: procesamiento de lenguaje natural para formular respuestas útiles.
+- **Escalable**: puede desplegarse en servidores o entornos serverless como contenedores o funciones.
+- **Colaborativo y abierto**: ideal para contribuciones externas y extensiones.
 
-```bash
-git clone https://deepwiki.com/JuanjoseAR/Igui-AI.git
-cd Igui-AI
-cp .env.example .env
-# Configura tus claves (OPENAI_API_KEY, GEMINI_API_KEY, etc.)
-docker-compose up
-Accede al servicio en:
-👉 http://localhost:3000 (o conéctalo al cliente que prefieras).
+---
 
-🔹 Opción 2: Instalación manual
-Clona el repositorio y crea tu .env.
+## 📁 Estructura de Directorios
 
-Instala el backend:
+/.
+├── src/ # Código fuente del backend
+│ ├── api/ # Controladores o rutas (ej. webhook, REST endpoints)
+│ ├── services/ # Lógica de IA y procesamiento de mensajes
+│ └── utils/ # Utilidades y helpers
+├── config/ # Archivos de configuración (API keys, tokens)
+├── tests/ # Pruebas unitarias e integraciones
+├── Dockerfile # Para contenerización
+├── docker-compose.yml # Orquestación si hay múltiples servicios
+├── package.json # Gestión de dependencias y scripts (si es Node.js)
+└── README.md # Este archivo
+
+yaml
+Copiar código
+
+---
+
+## 🛠️ Instalación & Uso
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://deepwiki.com/JuanjoseAR/Igui-AI.git
+   cd Igui-AI
+Instala dependencias (ej. Node.js):
 
 bash
 Copiar código
-cd api
-pip install -r requirements.txt
-uvicorn main:app --reload
-Integra el cliente de tu elección (ej. WhatsApp, Telegram, Webchat).
+npm install
+Configura tus credenciales (WhatsApp, Telegram, API keys) en config/.
 
-🚀 Flujo de funcionamiento
-mermaid
-Copiar código
-flowchart TD
-    A[Usuario] -->|URL del repo| B[Backend Igui-AI]
-    B --> C[Análisis del repositorio]
-    C --> D[Generación de Embeddings]
-    D --> E[Documentación y Diagramas]
-    E --> F[Interfaz elegida: WhatsApp/Telegram/Web]
-📂 Estructura del proyecto
+Ejecuta en desarrollo:
+
 bash
 Copiar código
-/
-├── api/                  # Backend con FastAPI
-├── clients/              # Adaptadores (WhatsApp, Telegram, Webchat)
-├── .env.example          # Variables de entorno
-├── docker-compose.yml    # Configuración Docker
-└── README.md             # Este archivo
+npm run dev
+(Opcional) Ejecución via Docker:
+
+bash
+Copiar código
+docker build -t igui-ai .
+docker run -p 3000:3000 igui-ai
+Pruebas:
+
+bash
+Copiar código
+npm test
+🧠 ¿Cómo conectar un Frontend?
+Puedes adaptar el frontend según tu escenario:
+
+WhatsApp: usa una librería tipo whatsapp-web.js o APIs oficiales para recibir y enviar mensajes desde tu número de WhatsApp conectado al backend.
+
+Telegram: usa node-telegram-bot-api, telegraf, u otras librerías para Telegram para manejar actualizaciones webhook.
+
+Chat Web: crea un frontend en React/Vue/HTML que envíe mensajes vía fetch/AJAX a tu endpoint REST y renderice respuestas en tiempo real.
+
 👥 Colaboradores
-👨‍💻 Juan José Arango Rodríguez
+Este proyecto es mantenido por:
 
-👨‍💻 Andrés Felipe Angulo López
+Juan José Arango Rodriguez
 
-👨‍💻 Luis Miguel Toscano Sánchez
+Andrés Felipe Angulo Lopéz
 
-👨‍💻 José Luis Romero Gonzales
+Luis Miguel Toscano Sanchez
 
-👨‍💻 Breiner Gonzales Machado
+José Luis Romero Gonzales
 
-🤝 Contribución
-Las contribuciones son bienvenidas 🚀
-Puedes:
+Breiner Gonzales Machado
 
-Agregar nuevos clientes (ej. Slack, Discord).
+📝 Contribuciones
+Las contribuciones son bienvenidas. Para colaborar:
 
-Mejorar el análisis de código y embeddings.
+Haz fork del repositorio.
 
-Optimizar generación de diagramas.
+Crea una rama (feature/tu-nueva-funcionalidad).
 
-Reportar errores o sugerir mejoras vía issues o pull requests.
+Haz cambios y asegúrate de pasar las pruebas.
 
-🧾 Licencia
-📜 Este proyecto está bajo MIT License. Consulta el archivo LICENSE para más información.
+Envía un Pull Request describiendo tus cambios.
+
+Por favor, revisa el archivo CONTRIBUTING.md (si existe) para detalles adicionales sobre estilo de código, pruebas, etc.
+
+📚 Documentación y Recursos
+Documentación del API: documentos en docs/ o auto generada con tools como Swagger, Postman, etc.
+
+Guías de integración: ejemplos de conectores (WhatsApp, Telegram, web chat).
+
+Referencias internas: descripción de endpoints, formatos de mensajes, estructura de datos, etc.
+
+✅ Licencia
+Este proyecto está bajo la licencia MIT License (o especifica la correspondiente).
+
+🧪 Ejemplo de uso
+bash
+Copiar código
+curl -X POST http://localhost:3000/api/message \
+     -H "Content-Type: application/json" \
+     -d '{ "platform": "telegram", "userId": "123456", "text": "Hola, Igui-AI!" }'
+Respuesta esperada:
+
+json
+Copiar código
+{
+  "reply": "Hola 👋, ¿en qué puedo ayudarte hoy?"
+}
+🎯 Roadmap
+Futuras mejoras incluyen:
+
+Integraciones adicionales (Facebook Messenger, Slack, Discord, WhatsApp Business API)
+
+Funcionalidades avanzadas de NLP (análisis de sentimiento, intents personalizados)
+
+Panel de administración para supervision/monitorización de chats
+
+Logs, métricas y analíticas internos
+
+📞 Contacto
+Para preguntas o soporte, por favor contacta a cualquiera de los colaboradores listados más arriba o abre un issue.
